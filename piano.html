@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrument Interface</title>
+</head>
+<body>
+    <div id="interface">
+        <button onclick="addNote()">Add Note</button>
+        <button onclick="removeLastNote()">Remove Last Note</button>
+        <button onclick="shuffleRecord()">Shuffle Record</button>
+        <button onclick="autoCompose(4)">Auto Compose</button>
+        <button onclick="logRecord()">Log Record</button>
+        <div id="record"></div>
+    </div>
+
+    <script>
+        // Define Note class
+        class Note {
+            static nameList = ["do", "re", "mi", "fa", "sol", "la", "ti"];
+            constructor(name, pitch) {
+                this.name = name;
+                this.pitch = Math.max(1, Math.min(7, pitch)); // Ensure pitch is between 1 and 7
+            }
+            show() {
+                console.log(`Note: ${this.name}, Pitch: ${this.pitch}`);
+            }
+        }
+
+        // Define Instrument class
+        class Instrument {
+            constructor() {
+                this.record = [];
+            }
+            addNote(name, pitch) {
+                const newNote = new Note(name, pitch);
+                this.record.push(newNote);
+            }
+            removeLastNote() {
+                this.record.pop();
+            }
+            changeNote(index, name, pitch) {
+                if (index >= 0 && index < this.record.length) {
+                    this.record[index] = new Note(name, pitch);
+                } 
+                else {
+                    console.log("Invalid index provided.");
+                }
+            }
+            shuffleRecord() {
+                this.record = this.shuffle(this.record);
+            }
+            shuffle(array) {
+                const copy = [];
+                let n = array.length;
+                let i;
+                while (n) {
+                    i = Math.floor(Math.random() * array.length);
+                    if (i in array) {
+                        copy.push(array[i]);
+                        delete array[i];
+                        n--;
+                    }
+                }
+                return copy;
+            }
+            autoCompose(num) {
+                this.record = [];
+                for (let i = 0; i < num; i++) {
+                    const name = this.getRandomNoteName();
+                    const pitch = Math.floor(Math.random() * 7) + 1;
+                    this.addNote(name, pitch);
+                }
+            }
+            getRandomNoteName() {
+                return Note.nameList[Math.floor(Math.random() * Note.nameList.length)];
+            }
+            logRecord() {
+                const recordDiv = document.getElementById('record');
+                recordDiv.innerHTML = "<h3>Recorded Notes:</h3>";
+                this.record.forEach((note, index) => {
+                    recordDiv.innerHTML += `<p>Note ${index + 1}: ${note.name} - Pitch ${note.pitch}</p>`;
+                });
+            }
+        }
+
+        // Instantiate Instrument
+        const myInstrument = new Instrument();
+
+        // Functions to handle user interactions
+        function addNote() {
+            const name = getRandomNoteName();
+            const pitch = Math.floor(Math.random() * 7) + 1;
+            myInstrument.addNote(name, pitch);
+            logRecord();
+        }
+
+        function removeLastNote() {
+            myInstrument.removeLastNote();
+            logRecord();
+        }
+
+        function shuffleRecord() {
+            myInstrument.shuffleRecord();
+            logRecord();
+        }
+
+        function autoCompose(num) {
+            myInstrument.autoCompose(num);
+            logRecord();
+        }
+
+        function logRecord() {
+            myInstrument.logRecord();
+        }
+
+        function getRandomNoteName() {
+            return Note.nameList[Math.floor(Math.random() * Note.nameList.length)];
+        }
+    </script>
+</body>
+</html>

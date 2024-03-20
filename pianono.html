@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano</title>
+    <style>
+        .piano {
+            display: flex;
+            justify-content: space-between;
+            width: 600px;
+            margin: 20px auto;
+        }
+        .key {
+            width: 50px;
+            height: 200px;
+            background-color: white;
+            border: 1px solid black;
+            cursor: pointer;
+        }
+        .black-key {
+            position: absolute;
+            width: 30px;
+            height: 120px;
+            background-color: black;
+            margin-top: -120px;
+            margin-left: -15px;
+            z-index: 1;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="piano">
+        <div class="key" id="key1">
+            <audio src="do.mp3" id="audio-do"></audio>
+        </div>
+        <div class="key" id="key2">
+            <audio src="re.mp3" id="audio-re"></audio>
+        </div>
+        <div class="key" id="key3">
+            <audio src="mi.mp3" id="audio-mi"></audio>
+        </div>
+        <div class="key" id="key4">
+            <audio src="fa.mp3" id="audio-fa"></audio>
+        </div>
+        <div class="key" id="key5">
+            <audio src="sol.mp3" id="audio-sol"></audio>
+        </div>
+        <div class="key" id="key6">
+            <audio src="la.mp3" id="audio-la"></audio>
+        </div>
+        <div class="key" id="key7">
+            <audio src="ti.mp3" id="audio-ti"></audio>
+        </div>
+    </div>
+
+    <script>
+        // Define Note class
+        class Note {
+            static nameList = ["do", "re", "mi", "fa", "sol", "la", "ti"];
+            constructor(name, pitch) {
+                this.name = name;
+                this.pitch = pitch;
+            }
+        }
+
+        // Define Instrument class
+        class Instrument {
+            constructor() {
+                this.record = [];
+            }
+
+            addNote(name, pitch) {
+                const newNote = new Note(name, pitch);
+                this.record.push(newNote);
+            }
+
+            logRecord() {
+                console.log("Recorded Notes:");
+                this.record.forEach((note, index) => {
+                    console.log(`Note ${index + 1}: ${note.name} - Pitch ${note.pitch}`);
+                });
+            }
+        }
+
+        // Instantiate Instrument
+        const myInstrument = new Instrument();
+
+        // Function to create HTML piano keys
+        function createPiano() {
+            const keys = document.querySelectorAll('.key');
+            keys.forEach((key, index) => {
+                key.addEventListener('click', () => {
+                    const name = Note.nameList[index];
+                    const pitch = index + 1;
+                    myInstrument.addNote(name, pitch);
+                    logRecord();
+                    playAudio(name);
+                });
+            });
+        }
+
+        // Function to log recorded notes
+        function logRecord() {
+            console.log("Recorded Notes:");
+            myInstrument.logRecord();
+        }
+
+        // Function to play audio
+        function playAudio(note) {
+            const audio = document.getElementById(`audio-${note}`);
+            audio.currentTime = 0; // Reset audio to start
+            audio.play();
+        }
+
+        // Initialize piano
+        createPiano();
+    </script>
+</body>
+</html>
